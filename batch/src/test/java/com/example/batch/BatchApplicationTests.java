@@ -1,10 +1,10 @@
-package com.example.rx1;
+package com.example.batch;
 
 import org.junit.jupiter.api.Test;
 import org.springframework.boot.test.context.SpringBootTest;
 
 @SpringBootTest
-class Rx1ApplicationTests {
+class BatchApplicationTests {
 
 	@Test
 	void contextLoads() {
