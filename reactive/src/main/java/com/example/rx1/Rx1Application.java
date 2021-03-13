@@ -25,6 +25,7 @@ import org.springframework.web.reactive.socket.WebSocketSession;
 import org.springframework.web.reactive.socket.server.upgrade.ReactorNettyRequestUpgradeStrategy;
 import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
+import reactor.netty.http.server.HttpServerResponse;
 
 import java.time.Duration;
 import java.time.Instant;
@@ -35,9 +36,9 @@ import java.util.stream.Stream;
 import static org.springframework.web.reactive.function.server.RouterFunctions.route;
 import static org.springframework.web.reactive.function.server.ServerResponse.*;
 
-@TypeHint(types = {Customer.class})
-@TypeHint(types = reactor.netty.http.server.HttpServerResponse.class, access = AccessBits.CLASS)
-@TypeHint(types = org.springframework.web.reactive.socket.server.upgrade.ReactorNettyRequestUpgradeStrategy.class)
+@TypeHint(types = Customer.class)
+@TypeHint(types = HttpServerResponse.class, access = AccessBits.CLASS)
+@TypeHint(types = ReactorNettyRequestUpgradeStrategy.class)
 @SpringBootApplication
 public class Rx1Application {
 
