@@ -5,12 +5,14 @@ import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.context.annotation.Bean;
 import org.springframework.security.config.Customizer;
 import org.springframework.security.config.web.server.ServerHttpSecurity;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.security.core.userdetails.MapReactiveUserDetailsService;
 import org.springframework.security.core.userdetails.User;
 import org.springframework.security.web.server.SecurityWebFilterChain;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+import java.security.Principal;
 import java.util.Map;
 
 @SpringBootApplication
@@ -42,7 +44,7 @@ public class SecurityApplication {
 class HelloRestController {
 
 	@GetMapping("/hello")
-	Map<String, String> hello() {
-		return Map.of("greetings", "Hello, world!");
+	Map<String, String> hello(@AuthenticationPrincipal Principal user) {
+		return Map.of("greetings", "Hello, " + user.getName() + "!");
 	}
 }
