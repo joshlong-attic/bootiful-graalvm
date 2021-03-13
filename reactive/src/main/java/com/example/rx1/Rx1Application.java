@@ -10,6 +10,7 @@ import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.context.annotation.Bean;
 import org.springframework.data.annotation.Id;
 import org.springframework.data.repository.reactive.ReactiveCrudRepository;
+import org.springframework.nativex.hint.AccessBits;
 import org.springframework.nativex.hint.InitializationHint;
 import org.springframework.nativex.hint.NativeHint;
 import org.springframework.nativex.hint.TypeHint;
@@ -34,10 +35,9 @@ import java.util.stream.Stream;
 import static org.springframework.web.reactive.function.server.RouterFunctions.route;
 import static org.springframework.web.reactive.function.server.ServerResponse.*;
 
-@TypeHint(types = {
-	ReactorNettyRequestUpgradeStrategy.class,
-	Customer.class}
-)
+@TypeHint(types = {Customer.class})
+@TypeHint(types = reactor.netty.http.server.HttpServerResponse.class, access = AccessBits.CLASS)
+@TypeHint(types = org.springframework.web.reactive.socket.server.upgrade.ReactorNettyRequestUpgradeStrategy.class)
 @SpringBootApplication
 public class Rx1Application {
 
