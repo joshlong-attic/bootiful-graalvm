@@ -1,2 +1,4 @@
-# bootiful-graalvm
-don't be naïve about native
+# Bootiful GraalVM
+
+Don't be naïve about native!
+
