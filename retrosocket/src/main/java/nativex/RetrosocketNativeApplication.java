@@ -26,69 +26,68 @@ import reactor.core.publisher.Mono;
  * Spring Native just yet, so we need to manually register a client
  * interface using {@link RSocketClientBuilder}.
  */
-@ProxyHint (
-	types = {
-		GreetingClient.class,
-		org.springframework.aop.SpringProxy.class,
-		org.springframework.aop.framework.Advised.class,
-		org.springframework.core.DecoratingProxy.class
-	}
+@ProxyHint(
+        types = {
+                GreetingClient.class,
+                org.springframework.aop.SpringProxy.class,
+                org.springframework.aop.framework.Advised.class,
+                org.springframework.core.DecoratingProxy.class
+        }
 )
 @TypeHint(
-	typeNames = {
-		"org.springframework.retrosocket.RSocketClientsRegistrar",
-	},
-	types = {
-		Greeting.class,
-		GreetingClient.class,
-		ReusableMessageFactory.class,
-		DefaultFlowMessageFactory.class
-	})
+        typeNames = {
+                "org.springframework.retrosocket.RSocketClientsRegistrar",
+        },
+        types = {
+                Greeting.class,
+                GreetingClient.class,
+                ReusableMessageFactory.class,
+                DefaultFlowMessageFactory.class
+        }
+)
 @EnableRSocketClients
 @SpringBootApplication
 public class RetrosocketNativeApplication {
 
-	@SneakyThrows
-	public static void main(String[] args) {
-		SpringApplication.run(RetrosocketNativeApplication.class, args);
-		Thread.sleep(5_000);
-	}
+    @SneakyThrows
+    public static void main(String[] args) {
+        SpringApplication.run(RetrosocketNativeApplication.class, args);
+        Thread.sleep(5_000);
+    }
 
-	@Bean
-	ApplicationListener<ApplicationReadyEvent> ready(GreetingClient rgc) {
-		return event -> {
-			Mono<Greeting> greet = rgc.greet("Spring fans!");
-			greet.subscribe(gr -> System.out.println("response: " + gr.toString()));
-		};
-	}
+    @Bean
+    ApplicationListener<ApplicationReadyEvent> ready(GreetingClient rgc) {
+        return event -> {
+            Mono<Greeting> greet = rgc.greet("Spring fans!");
+            greet.subscribe(gr -> System.out.println("response: " + gr.toString()));
+        };
+    }
 
-	@Bean
-	RSocketRequester rSocketRequester(
-		@Value("${service.host:localhost}") String host,
-		RSocketRequester.Builder builder) {
-		return builder.tcp(host, 8181);
-	}
+    @Bean
+    RSocketRequester rSocketRequester(
+            @Value("${service.host:localhost}") String host,
+            RSocketRequester.Builder builder) {
+        return builder.tcp(host, 8181);
+    }
 
-	@Bean
-	GreetingClient greetingClient(RSocketRequester rsr) {
-		var rcfb = new RSocketClientBuilder();
-		return rcfb.buildClientFor(GreetingClient.class, rsr);
-	}
-
+    @Bean
+    GreetingClient greetingClient(RSocketRequester rsr) {
+        var rcfb = new RSocketClientBuilder();
+        return rcfb.buildClientFor(GreetingClient.class, rsr);
+    }
 }
 
 @Data
 @AllArgsConstructor
 @NoArgsConstructor
 class Greeting {
-	private String message;
+    private String message;
 }
-
 
 interface GreetingClient {
 
-	@MessageMapping("greeting.{name}")
-	Mono<Greeting> greet(@DestinationVariable String name);
+    @MessageMapping("greeting.{name}")
+    Mono<Greeting> greet(@DestinationVariable String name);
 }
 
 
