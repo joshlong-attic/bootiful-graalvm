@@ -22,17 +22,16 @@ import org.springframework.retrosocket.RSocketClientBuilder;
 import reactor.core.publisher.Mono;
 
 /**
-	* The custom component scanning doesn't quite work with
-	* Spring Native just yet, so we need to manually register
-	* a client interface using the
-	*/
+ * The custom component scanning doesn't quite work with
+ * Spring Native just yet, so we need to manually register a client
+ * interface using {@link RSocketClientBuilder}.
+ */
 @ProxyHint (
 	types = {
 		GreetingClient.class,
 		org.springframework.aop.SpringProxy.class,
 		org.springframework.aop.framework.Advised.class,
 		org.springframework.core.DecoratingProxy.class
-
 	}
 )
 @TypeHint(
