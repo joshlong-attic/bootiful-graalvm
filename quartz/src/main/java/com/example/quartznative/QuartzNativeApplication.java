@@ -35,7 +35,7 @@ import java.util.List;
         trigger = org.quartz.utils.DirtyFlagMap.class,
         types = {
                 @TypeHint(types = java.util.HashMap.class),
-                @TypeHint(types = SampleJob.class),
+                @TypeHint(types = SampleJob.class), // the user would still need to register this type for reflection
                 @TypeHint(
                         access = AccessBits.ALL,
                         types = {
