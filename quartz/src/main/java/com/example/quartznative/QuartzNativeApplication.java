@@ -7,84 +7,106 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.context.annotation.Bean;
-import org.springframework.nativex.hint.AccessBits;
-import org.springframework.nativex.hint.NativeHint;
-import org.springframework.nativex.hint.ResourceHint;
-import org.springframework.nativex.hint.TypeHint;
+import org.springframework.nativex.hint.*;
+import org.springframework.nativex.type.HintDeclaration;
+import org.springframework.nativex.type.NativeConfiguration;
+import org.springframework.nativex.type.TypeSystem;
 import org.springframework.scheduling.quartz.LocalDataSourceJobStore;
 import org.springframework.scheduling.quartz.LocalTaskExecutorThreadPool;
 import org.springframework.scheduling.quartz.QuartzJobBean;
 import org.springframework.scheduling.quartz.ResourceLoaderClassLoadHelper;
 
 import java.time.Instant;
-//todo turn this into a pattern
-@ResourceHint  (
-	patterns = "/org/quartz/impl/jdbcjobstore/tables_*.sql"
+import java.util.List;
+
+/**
+ * todo: make sure to also register some serialization-config.json. We need some entries. See the META-INF/native-image/serialization-config.json for an example.
+ * todo: extract that out into a NativeConfiguration that programatically registers the config? i dont know if Spring Native even supports serialization-config.json atm.
+ */
+@ResourceHint(
+        patterns = {
+                "org/quartz/impl/jdbcjobstore/tables_*.sql$",
+                "org/quartz/impl/jdbcjobstore/tables_h2.sql$"
+        }
 )
+
+@FieldHint(allowUnsafeAccess = true, name = "loadFactor")
 @NativeHint(
-	trigger = QuartzJobBean.class,
-	types = {
-		@TypeHint(types = SampleJob.class),
-		@TypeHint(
-			access = AccessBits.ALL,
-			types = {
-				org.quartz.simpl.RAMJobStore. class,
-				LocalDataSourceJobStore.class,
-				SimpleThreadPool.class,
-				ResourceLoaderClassLoadHelper.class,
-				LocalTaskExecutorThreadPool.class,
-				StdSchedulerFactory.class,
-			}
-		)}
+//        trigger = org.quartz.utils.DirtyFlagMap.class,
+        types = {
+                @TypeHint(
+                        access = AccessBits.ALL,
+                        types = java.util.HashMap.class,
+                        typeNames = "java.util.HashMap",
+                        fields = {
+                                @FieldHint(allowUnsafeAccess = true, name = "loadFactor") ,
+                                @FieldHint(allowUnsafeAccess = true, name = "java.util.HashMap.loadFactor")
+                        }),
+                @TypeHint(types = SampleJob.class),
+                @TypeHint(
+                        access = AccessBits.ALL,
+                        types = {
+                                java.util.HashMap.class,
+                                org.quartz.utils.DirtyFlagMap.class,
+                                org.quartz.impl.jdbcjobstore.StdJDBCDelegate.class,
+                                org.quartz.simpl.RAMJobStore.class,
+                                LocalDataSourceJobStore.class,
+                                SimpleThreadPool.class,
+                                ResourceLoaderClassLoadHelper.class,
+                                LocalTaskExecutorThreadPool.class,
+                                StdSchedulerFactory.class,
+                        }
+                )}
 )
 @SpringBootApplication
 public class QuartzNativeApplication {
 
-	public static void main(String[] args) {
-		SpringApplication.run(QuartzNativeApplication.class, args);
-	}
 
-	@Bean
-	JobDetail sampleJobDetail(@Value("${greetings.name:World}") String name) {
-		return JobBuilder
-			.newJob(SampleJob.class) //
-			.withIdentity("sampleJob") //
-			.usingJobData("name", name) //
-			.storeDurably() //
-			.build();
-	}
+    public static void main(String[] args) {
+        SpringApplication.run(QuartzNativeApplication.class, args);
+    }
 
-	@Bean
-	Trigger sampleJobTrigger(JobDetail sampleJobDetail) {
-		var scheduleBuilder = SimpleScheduleBuilder
-			.simpleSchedule() //
-			.withIntervalInSeconds(2) //
-			.withRepeatCount(5);
+    @Bean
+    JobDetail sampleJobDetail(@Value("${greetings.name:World}") String name) {
+        return JobBuilder
+                .newJob(SampleJob.class) //
+                .withIdentity("sampleJob") //
+                .usingJobData("name", name) //
+                .storeDurably() //
+                .build();
+    }
 
-		return TriggerBuilder//
-			.newTrigger()//
-			.forJob(sampleJobDetail)//
-			.withIdentity("sampleTrigger") //
-			.withSchedule(scheduleBuilder) //
-			.build();
-	}
-	//
+    @Bean
+    Trigger sampleJobTrigger(JobDetail sampleJobDetail) {
+        var scheduleBuilder = SimpleScheduleBuilder
+                .simpleSchedule() //
+                .withIntervalInSeconds(2) //
+                .withRepeatCount(5);
+
+        return TriggerBuilder//
+                .newTrigger()//
+                .forJob(sampleJobDetail)//
+                .withIdentity("sampleTrigger") //
+                .withSchedule(scheduleBuilder) //
+                .build();
+    }
+    //
 }
 
 
 class SampleJob extends QuartzJobBean {
 
-	private String name;
+    private String name;
 
-	// Invoked if a Job data map entry with that name
-	public void setName(String name) {
-		this.name = name;
-	}
+    // Invoked if a Job data map entry with that name
+    public void setName(String name) {
+        this.name = name;
+    }
 
-	@Override
-	protected void executeInternal(JobExecutionContext context)
-		throws JobExecutionException {
-		System.out.println(String.format("Hello %s @ " + Instant.now() + "!", this.name));
-	}
+    @Override
+    protected void executeInternal(JobExecutionContext context)
+            throws JobExecutionException {
+        System.out.println(String.format("Hello %s @ " + Instant.now() + "!", this.name));
+    }
 
 }

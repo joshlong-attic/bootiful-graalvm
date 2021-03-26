@@ -32,6 +32,13 @@
             <artifactId>spring-native</artifactId>
             <version>${spring-native.version}</version>
         </dependency>
+        <!--
+        -->
+        <dependency>
+            <groupId>org.springframework.experimental</groupId>
+            <artifactId>spring-aot</artifactId>
+            <version>${spring-native.version}</version>
+        </dependency>
 
         <dependency>
             <groupId>com.h2database</groupId>

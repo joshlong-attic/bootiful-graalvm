@@ -1,0 +1,14 @@
+[
+  {
+    "name": "org.quartz.utils.DirtyFlagMap"
+  },
+  {
+    "name": "java.lang.String"
+  },
+  {
+    "name": "org.quartz.utils.StringKeyDirtyFlagMap"
+  },
+  {
+    "name": "org.quartz.JobDataMap"
+  }
+]
