@@ -19,8 +19,7 @@ import org.springframework.scheduling.quartz.ResourceLoaderClassLoadHelper;
 import java.time.Instant;
 //todo turn this into a pattern
 @ResourceHint  (
-	patterns = "classpath:org/quartz/impl/\"\n" +
-		"\t\t\t\t+ \"jdbcjobstore/tables_@@platform@@.sql"
+	patterns = "/org/quartz/impl/jdbcjobstore/tables_*.sql"
 )
 @NativeHint(
 	trigger = QuartzJobBean.class,
@@ -86,7 +85,6 @@ class SampleJob extends QuartzJobBean {
 	protected void executeInternal(JobExecutionContext context)
 		throws JobExecutionException {
 		System.out.println(String.format("Hello %s @ " + Instant.now() + "!", this.name));
-
 	}
 
 }
