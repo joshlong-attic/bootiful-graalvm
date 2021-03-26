@@ -10,5 +10,8 @@
   },
   {
     "name": "org.quartz.JobDataMap"
+  },
+  {
+    "name": "java.util.HashMap"
   }
 ]

@@ -32,21 +32,14 @@ import java.util.List;
 
 @FieldHint(allowUnsafeAccess = true, name = "loadFactor")
 @NativeHint(
-//        trigger = org.quartz.utils.DirtyFlagMap.class,
+        trigger = org.quartz.utils.DirtyFlagMap.class,
         types = {
-                @TypeHint(
-                        access = AccessBits.ALL,
-                        types = java.util.HashMap.class,
-                        typeNames = "java.util.HashMap",
-                        fields = {
-                                @FieldHint(allowUnsafeAccess = true, name = "loadFactor") ,
-                                @FieldHint(allowUnsafeAccess = true, name = "java.util.HashMap.loadFactor")
-                        }),
+                @TypeHint(types = java.util.HashMap.class),
                 @TypeHint(types = SampleJob.class),
                 @TypeHint(
                         access = AccessBits.ALL,
                         types = {
-                                java.util.HashMap.class,
+                                org.quartz.impl.triggers.SimpleTriggerImpl.class ,
                                 org.quartz.utils.DirtyFlagMap.class,
                                 org.quartz.impl.jdbcjobstore.StdJDBCDelegate.class,
                                 org.quartz.simpl.RAMJobStore.class,
